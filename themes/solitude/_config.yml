@@ -190,13 +190,13 @@ aside:
     uv: true
     # Last update date
     # 最后更新日期
-    updatetime: true
+    updatetime: false
     # Website creation time
     # 网站创建时间
     runtimeenable: true
     # Format: yyyy-MM-dd hh-mm-ss
     # 格式: yyyy-MM-dd hh-mm-ss
-    runtime: "2023-04-20 00:00:00"
+    runtime: "2026-07-14 00:00:00"
   # --------------------------- end ---------------------------
 # --------------------------- end ---------------------------
 
@@ -329,8 +329,8 @@ post:
 # --------------------------- start ---------------------------
 # Custom Theme Color
 theme_color:
-  dark: "#ffc848" # dark
-  light: "#425AEF" # light
+  dark: "#ff9fbd" # dark
+  light: "#df668f" # light
 # --------------------------- end ---------------------------
 
 # --------------------------- start ---------------------------
@@ -739,11 +739,13 @@ extends:
   # Insert in head
   # 插入到 head
   head:
+    - <link rel="stylesheet" href="/css/custom.css">
   #  - <script src="https://cdn.bootcdn.net/ajax/libs/pace/1.2.4/pace.min.js"></script>
 
   # Insert in body
   # 插入到 body
   body:
+    - <script defer src="/js/effects.js"></script>
   #  - <script src="https://cdn.bootcdn.net/ajax/libs/pace/1.2.4/pace.min.js"></script>
 # --------------------------- end ---------------------------
 

@@ -1,0 +1,247 @@
+/*
+ * Personal visual layer for wsyyyezywy.me.
+ * Keep these rules separate from the theme so future theme upgrades stay easy.
+ */
+
+:root {
+  --romance-pink: #df668f;
+  --romance-pink-soft: rgba(223, 102, 143, 0.15);
+  --romance-purple: #8d72d9;
+  --romance-shadow: 0 18px 48px rgba(158, 91, 130, 0.12);
+}
+
+[data-theme="light"] {
+  --efu-background: #fff8fb;
+  --efu-card-bg: rgba(255, 255, 255, 0.86);
+  --efu-card-border: rgba(218, 139, 170, 0.24);
+  --efu-secondbg: rgba(255, 240, 247, 0.88);
+  --efu-secondbg-bg: rgba(255, 235, 245, 0.92);
+  --efu-theme-op-light: rgba(223, 102, 143, 0.08);
+  --efu-shadow-border: 0 14px 42px rgba(158, 91, 130, 0.09);
+}
+
+[data-theme="dark"] {
+  --efu-background: #17131d;
+  --efu-card-bg: rgba(34, 27, 43, 0.9);
+  --efu-card-border: rgba(255, 159, 189, 0.19);
+  --efu-secondbg: rgba(47, 37, 58, 0.92);
+  --efu-secondbg-bg: rgba(55, 42, 68, 0.94);
+  --efu-shadow-border: 0 18px 46px rgba(0, 0, 0, 0.24);
+}
+
+body {
+  background:
+    radial-gradient(circle at 7% 8%, rgba(255, 189, 213, 0.3), transparent 28rem),
+    radial-gradient(circle at 92% 18%, rgba(190, 169, 255, 0.24), transparent 30rem),
+    linear-gradient(145deg, #fff9fc 0%, #fff5fa 44%, #f7f4ff 100%);
+  background-attachment: fixed;
+}
+
+[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at 7% 8%, rgba(187, 77, 121, 0.2), transparent 28rem),
+    radial-gradient(circle at 92% 18%, rgba(106, 80, 172, 0.22), transparent 30rem),
+    linear-gradient(145deg, #17131d 0%, #1e1724 48%, #171522 100%);
+  background-attachment: fixed;
+}
+
+#body-wrap {
+  position: relative;
+  z-index: 3;
+  background: transparent;
+}
+
+#sakura-rain,
+#click-fireworks {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#sakura-rain {
+  z-index: 2;
+}
+
+#click-fireworks {
+  z-index: 99999;
+}
+
+#category-bar,
+#aside-content .card-widget,
+#recent-posts .recent-post-item,
+#post {
+  border-color: rgba(223, 102, 143, 0.2);
+  box-shadow: var(--romance-shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+#category-bar {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 10px 32px rgba(158, 91, 130, 0.08);
+}
+
+[data-theme="dark"] #category-bar {
+  background: rgba(34, 27, 43, 0.78);
+}
+
+#category-bar .category-bar-items .category-bar-item.select a,
+#pagination .page-number.current {
+  background: linear-gradient(135deg, var(--romance-pink), var(--romance-purple));
+  box-shadow: 0 8px 22px rgba(223, 102, 143, 0.28);
+}
+
+#recent-posts .recent-post-item {
+  position: relative;
+  min-height: 220px;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 86% 22%, rgba(255, 178, 207, 0.2), transparent 12rem),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 243, 249, 0.88));
+}
+
+[data-theme="dark"] #recent-posts .recent-post-item {
+  background:
+    radial-gradient(circle at 86% 22%, rgba(255, 137, 180, 0.13), transparent 12rem),
+    linear-gradient(135deg, rgba(37, 29, 45, 0.95), rgba(46, 33, 52, 0.9));
+}
+
+#recent-posts .recent-post-item::before,
+#recent-posts .recent-post-item::after {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+#recent-posts .recent-post-item::before {
+  top: -78px;
+  right: -38px;
+  width: 220px;
+  height: 220px;
+  border: 1px solid rgba(223, 102, 143, 0.16);
+  box-shadow:
+    0 0 0 28px rgba(223, 102, 143, 0.035),
+    0 0 0 58px rgba(141, 114, 217, 0.025);
+}
+
+#recent-posts .recent-post-item::after {
+  right: 82px;
+  bottom: 32px;
+  width: 9px;
+  height: 9px;
+  background: rgba(223, 102, 143, 0.45);
+  box-shadow:
+    25px -18px 0 rgba(141, 114, 217, 0.3),
+    45px 12px 0 rgba(255, 178, 207, 0.4),
+    -17px 20px 0 rgba(223, 102, 143, 0.25);
+}
+
+#recent-posts .recent-post-item .recent-post-info {
+  z-index: 1;
+  min-height: 220px;
+  padding: 30px 38px;
+}
+
+#recent-posts .recent-post-item .article-title {
+  font-size: 1.3rem;
+  letter-spacing: 0.04em;
+}
+
+#recent-posts .recent-post-item:hover {
+  transform: translateY(-4px);
+  border-color: rgba(223, 102, 143, 0.48);
+  box-shadow: 0 22px 52px rgba(190, 96, 139, 0.18);
+}
+
+#aside-content .card-widget {
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] #aside-content .card-widget {
+  background: rgba(34, 27, 43, 0.86);
+}
+
+#aside-content .card-info::before {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.2), transparent 7rem),
+    linear-gradient(145deg, #ed759d 0%, #bd6fbb 52%, #7d70d7 100%);
+}
+
+#aside-content .card-info .description,
+#aside-content .card-info .bottom-group .name,
+#aside-content .card-info .bottom-group .desc {
+  color: #fff;
+}
+
+.card-webinfo .webinfo-item {
+  padding: 3px 2px;
+}
+
+#post {
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.87);
+}
+
+[data-theme="dark"] #post {
+  background: rgba(34, 27, 43, 0.9);
+}
+
+#post blockquote {
+  border-left-color: var(--romance-pink);
+  background: linear-gradient(90deg, rgba(223, 102, 143, 0.1), rgba(141, 114, 217, 0.05));
+}
+
+#footer {
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 244, 249, 0.72) 45%);
+}
+
+[data-theme="dark"] #footer {
+  background: linear-gradient(180deg, transparent 0%, rgba(28, 21, 34, 0.78) 45%);
+}
+
+#footer-bar {
+  border-top-color: rgba(223, 102, 143, 0.16);
+  background: rgba(255, 248, 251, 0.76);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+[data-theme="dark"] #footer-bar {
+  background: rgba(29, 23, 36, 0.8);
+}
+
+@media (max-width: 768px) {
+  #category-bar {
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.62);
+  }
+
+  #recent-posts .recent-post-item {
+    min-height: 180px;
+    border-radius: 18px;
+  }
+
+  #recent-posts .recent-post-item .recent-post-info {
+    min-height: 180px;
+    padding: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #sakura-rain,
+  #click-fireworks {
+    display: none;
+  }
+
+  #recent-posts .recent-post-item:hover {
+    transform: none;
+  }
+}

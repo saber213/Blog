@@ -110,9 +110,6 @@ mixin beianInfo()
             img.beian-icon(src=url_for(item.icon), alt=item.name)
           span.beian-name= item.name
     
-    +link(_p('hexo'), _p('framework_by') + 'Hexo', { class: 'footer-bar-link' })
-    +link(_p('repo'), _p('theme_by') + 'Solitude', { class: 'footer-bar-link' })
-
 //- 页脚右侧链接组件
 mixin footerRightLinks()
   +conditionalWrapper(theme.footer.links)
