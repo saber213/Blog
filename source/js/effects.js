@@ -7,7 +7,21 @@
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (reducedMotion.matches) return;
 
-  const pixelRatio = () => Math.min(window.devicePixelRatio || 1, 2);
+  const deviceRatio = window.devicePixelRatio || 1;
+  const sakuraRatio = Math.min(deviceRatio, 1.25);
+  const fireworkRatio = 1;
+  const maxSparks = 220;
+  const sparkColors = [
+    "#ff4f91",
+    "#ff884d",
+    "#ffd84d",
+    "#59e391",
+    "#53c8ff",
+    "#7f8cff",
+    "#bd70ff",
+    "#ff70dc"
+  ];
+  const opacityLevels = [0.28, 0.58, 0.9];
 
   function createCanvas(id) {
     const canvas = document.createElement("canvas");
@@ -19,12 +33,18 @@
 
   const sakuraCanvas = createCanvas("sakura-rain");
   const fireworkCanvas = createCanvas("click-fireworks");
-  const sakura = sakuraCanvas.getContext("2d");
-  const fireworks = fireworkCanvas.getContext("2d");
+  const contextOptions = { alpha: true, desynchronized: true };
+  const sakura = sakuraCanvas.getContext("2d", contextOptions);
+  const fireworks = fireworkCanvas.getContext("2d", contextOptions);
   let width = window.innerWidth;
   let height = window.innerHeight;
   let petals = [];
   let sparks = [];
+  let flashes = [];
+  const sparkBatches = Array.from(
+    { length: sparkColors.length * opacityLevels.length },
+    () => []
+  );
 
   const petalColors = [
     "rgba(255, 178, 207, 0.72)",
@@ -33,8 +53,7 @@
     "rgba(221, 173, 231, 0.56)"
   ];
 
-  function fitCanvas(canvas, context) {
-    const ratio = pixelRatio();
+  function fitCanvas(canvas, context, ratio) {
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
     canvas.style.width = width + "px";
@@ -66,8 +85,9 @@
   function resize() {
     width = window.innerWidth;
     height = window.innerHeight;
-    fitCanvas(sakuraCanvas, sakura);
-    fitCanvas(fireworkCanvas, fireworks);
+    fitCanvas(sakuraCanvas, sakura, sakuraRatio);
+    fitCanvas(fireworkCanvas, fireworks, fireworkRatio);
+    fireworks.clearRect(0, 0, width, height);
     resetPetals();
   }
 
@@ -85,13 +105,11 @@
     sakura.restore();
   }
 
-  let lastPetalFrame = performance.now();
-  function animatePetals(now) {
-    const delta = Math.min((now - lastPetalFrame) / 16.67, 2);
-    lastPetalFrame = now;
+  function drawPetals(delta) {
     sakura.clearRect(0, 0, width, height);
 
-    petals.forEach((petal, index) => {
+    for (let index = 0; index < petals.length; index += 1) {
+      const petal = petals[index];
       petal.phase += 0.012 * delta;
       petal.x += (petal.drift + Math.sin(petal.phase) * 0.28) * delta;
       petal.y += petal.speed * delta;
@@ -102,14 +120,12 @@
       } else {
         drawPetal(petal);
       }
-    });
-
-    requestAnimationFrame(animatePetals);
+    }
   }
 
   function burst(x, y) {
-    const baseHue = Math.random() * 360;
-    const amount = width < 768 ? 30 : 42;
+    const amount = width < 768 ? 26 : 34;
+    const colorOffset = Math.floor(Math.random() * sparkColors.length);
 
     for (let i = 0; i < amount; i += 1) {
       const angle = (Math.PI * 2 * i) / amount + (Math.random() - 0.5) * 0.12;
@@ -125,49 +141,110 @@
         friction: 0.975,
         life: 1,
         decay: 0.014 + Math.random() * 0.014,
-        size: 1.2 + Math.random() * 1.8,
-        hue: (baseHue + i * 11 + Math.random() * 28) % 360
+        colorIndex: (colorOffset + i) % sparkColors.length
       });
     }
 
-    if (sparks.length > 420) sparks = sparks.slice(-420);
+    flashes.push({ x: x, y: y, radius: 2, life: 1 });
+    if (flashes.length > 6) flashes = flashes.slice(-6);
+    if (sparks.length > maxSparks) {
+      sparks.splice(0, sparks.length - maxSparks);
+    }
   }
 
-  function animateFireworks() {
+  function drawFireworks(delta) {
+    if (sparks.length === 0 && flashes.length === 0) return;
+
     fireworks.clearRect(0, 0, width, height);
     fireworks.globalCompositeOperation = "lighter";
+    sparkBatches.forEach((batch) => { batch.length = 0; });
 
-    sparks = sparks.filter((spark) => {
+    let activeSparkCount = 0;
+    for (let i = 0; i < sparks.length; i += 1) {
+      const spark = sparks[i];
       spark.previousX = spark.x;
       spark.previousY = spark.y;
-      spark.vx *= spark.friction;
-      spark.vy = spark.vy * spark.friction + spark.gravity;
-      spark.x += spark.vx;
-      spark.y += spark.vy;
-      spark.life -= spark.decay;
+      const friction = Math.pow(spark.friction, delta);
+      spark.vx *= friction;
+      spark.vy = spark.vy * friction + spark.gravity * delta;
+      spark.x += spark.vx * delta;
+      spark.y += spark.vy * delta;
+      spark.life -= spark.decay * delta;
 
-      if (spark.life <= 0) return false;
+      if (spark.life <= 0) continue;
 
+      sparks[activeSparkCount] = spark;
+      activeSparkCount += 1;
+      const opacityIndex = spark.life > 0.66 ? 2 : (spark.life > 0.33 ? 1 : 0);
+      const batchIndex = opacityIndex * sparkColors.length + spark.colorIndex;
+      sparkBatches[batchIndex].push(spark);
+    }
+    sparks.length = activeSparkCount;
+
+    fireworks.lineCap = "round";
+    fireworks.lineWidth = width < 768 ? 1.5 : 1.8;
+    for (let batchIndex = 0; batchIndex < sparkBatches.length; batchIndex += 1) {
+      const batch = sparkBatches[batchIndex];
+      if (batch.length === 0) continue;
+
+      const opacityIndex = Math.floor(batchIndex / sparkColors.length);
+      const colorIndex = batchIndex % sparkColors.length;
+      fireworks.globalAlpha = opacityLevels[opacityIndex];
+      fireworks.strokeStyle = sparkColors[colorIndex];
       fireworks.beginPath();
-      fireworks.moveTo(spark.previousX, spark.previousY);
-      fireworks.lineTo(spark.x, spark.y);
-      fireworks.lineWidth = spark.size;
-      fireworks.lineCap = "round";
-      fireworks.strokeStyle = "hsla(" + spark.hue + ", 96%, 68%, " + spark.life + ")";
-      fireworks.shadowBlur = 8;
-      fireworks.shadowColor = "hsla(" + spark.hue + ", 96%, 68%, 0.8)";
+      for (let i = 0; i < batch.length; i += 1) {
+        const spark = batch[i];
+        fireworks.moveTo(spark.previousX, spark.previousY);
+        fireworks.lineTo(spark.x, spark.y);
+      }
       fireworks.stroke();
-      return true;
-    });
+    }
 
-    fireworks.shadowBlur = 0;
+    let activeFlashCount = 0;
+    for (let i = 0; i < flashes.length; i += 1) {
+      const flash = flashes[i];
+      flash.radius += 1.8 * delta;
+      flash.life -= 0.045 * delta;
+      if (flash.life <= 0) continue;
+
+      flashes[activeFlashCount] = flash;
+      activeFlashCount += 1;
+      fireworks.globalAlpha = flash.life * 0.75;
+      fireworks.strokeStyle = "#ffffff";
+      fireworks.lineWidth = 1.2;
+      fireworks.beginPath();
+      fireworks.arc(flash.x, flash.y, flash.radius, 0, Math.PI * 2);
+      fireworks.stroke();
+    }
+    flashes.length = activeFlashCount;
+
+    fireworks.globalAlpha = 1;
     fireworks.globalCompositeOperation = "source-over";
-    requestAnimationFrame(animateFireworks);
+  }
+
+  let lastFrame = performance.now();
+  function animate(now) {
+    if (document.hidden) {
+      lastFrame = now;
+      requestAnimationFrame(animate);
+      return;
+    }
+
+    const delta = Math.min((now - lastFrame) / 16.67, 2);
+    lastFrame = now;
+    drawPetals(delta);
+    drawFireworks(delta);
+    requestAnimationFrame(animate);
   }
 
   document.addEventListener("pointerdown", function (event) {
     if (event.button !== undefined && event.button !== 0) return;
+    if (event.isPrimary === false) return;
     burst(event.clientX, event.clientY);
+  }, { passive: true });
+
+  document.addEventListener("visibilitychange", function () {
+    lastFrame = performance.now();
   }, { passive: true });
 
   let resizeTimer;
@@ -177,6 +254,5 @@
   }, { passive: true });
 
   resize();
-  requestAnimationFrame(animatePetals);
-  requestAnimationFrame(animateFireworks);
+  requestAnimationFrame(animate);
 })();
