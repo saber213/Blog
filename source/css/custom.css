@@ -216,6 +216,17 @@ body {
   background: linear-gradient(90deg, rgba(223, 102, 143, 0.1), rgba(141, 114, 217, 0.05));
 }
 
+#post #post-comment {
+  margin: 0.75rem 2rem 1rem;
+  padding: 0;
+}
+
+#post #post-comment .comment-head {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0;
+}
+
 #footer {
   background: linear-gradient(180deg, transparent 0%, rgba(255, 244, 249, 0.72) 45%);
 }
@@ -242,6 +253,10 @@ body {
 
   #home #pagination {
     bottom: 1rem;
+  }
+
+  #post #post-comment {
+    margin: 0.5rem;
   }
 
   #category-bar {
