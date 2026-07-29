@@ -94,6 +94,23 @@ body {
   box-shadow: 0 8px 22px rgba(223, 102, 143, 0.28);
 }
 
+#home {
+  padding-bottom: 4.5rem;
+}
+
+#home #pagination {
+  position: fixed;
+  bottom: 1.5rem;
+  left: max(1rem, calc((100vw - 1400px) / 2 + 1.5rem));
+  z-index: 20;
+  width: auto;
+  margin: 0;
+}
+
+#home #pagination .pagination {
+  justify-content: flex-start;
+}
+
 #recent-posts .recent-post-item {
   position: relative;
   min-height: 220px;
@@ -219,6 +236,14 @@ body {
 }
 
 @media (max-width: 768px) {
+  #home {
+    padding-bottom: 4rem;
+  }
+
+  #home #pagination {
+    bottom: 1rem;
+  }
+
   #category-bar {
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.62);

@@ -21,7 +21,7 @@ site:
   name:
     class: text # text / i_class / img
     custom: Solitude # Solitude / fas fa-ghost / /img/pwa/favicon.ico
-  icon: /img/pwa/favicon.png # Site icon / 网站图标
+  icon: /img/site-icon.jpg # Site icon / 网站图标
 # --------------------------- end ---------------------------
 
 # --------------------------- start ---------------------------
@@ -134,7 +134,7 @@ aside:
       img: /img/logo.png # url
       sticker: # url, 24x24 size
     # 介绍 / Introduction
-    description: 只有迎风，风筝才能飞得更高。
+    description: 本来无一物，<br>何处惹尘埃。
     # 内容 / Content
     content: # 这是我的博客 / This is my Blog
     state:
